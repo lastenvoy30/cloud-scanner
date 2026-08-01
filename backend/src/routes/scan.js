@@ -4,6 +4,7 @@ const ScanResult = require("../models/ScanResult");
 const checkS3PublicAccess = require("../checks/s3PublicAccess");
 const checkOpenSecurityGroups = require("../checks/securityGroupOpenPorts");
 const checkIamOverPrivileged = require("../checks/iamOverPrivileged");
+const PDFDocument = require("pdfkit");
 
 function calculateGrade(findings) {
   const weights = { CRITICAL: 25, HIGH: 15, MEDIUM: 8, LOW: 3 };
@@ -36,6 +37,8 @@ router.post("/run", async (req, res) => {
   }
 });
 
+// IMPORTANT: /history must come BEFORE /:id, or Express will treat
+// "history" as an :id value and never reach this route.
 router.get("/history", async (req, res) => {
   try {
     const results = await ScanResult.find().sort({ timestamp: -1 }).limit(20);
@@ -45,8 +48,6 @@ router.get("/history", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
-const PDFDocument = require("pdfkit");
 
 router.get("/:id/pdf", async (req, res) => {
   try {
@@ -68,7 +69,6 @@ router.get("/:id/pdf", async (req, res) => {
       LOW: "#2f6fb5",
     };
 
-    // Header
     doc
       .fontSize(22)
       .fillColor("#0a0f1c")
@@ -83,7 +83,6 @@ router.get("/:id/pdf", async (req, res) => {
     doc.moveTo(50, doc.y).lineTo(545, doc.y).strokeColor("#dddddd").stroke();
     doc.moveDown(1);
 
-    // Grade summary
     doc
       .fontSize(16)
       .fillColor("#000000")
@@ -112,9 +111,7 @@ router.get("/:id/pdf", async (req, res) => {
         .fillColor(severityColors[f.severity] || "#000000")
         .text(`${i + 1}. [${f.severity}] ${f.check}`);
 
-      doc.fontSize(10).fillColor("#000000").text(f.description, {
-        indent: 15,
-      });
+      doc.fontSize(10).fillColor("#000000").text(f.description, { indent: 15 });
 
       doc
         .fontSize(9)
@@ -132,6 +129,29 @@ router.get("/:id/pdf", async (req, res) => {
     doc.end();
   } catch (err) {
     console.error("PDF generation failed:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Keep /:id LAST among GET routes on this path pattern — it's a
+// catch-all for a single segment, so anything more specific (/history,
+// /:id/pdf) must be declared above it.
+router.get("/:id", async (req, res) => {  
+  try {
+    const scan = await ScanResult.findById(req.params.id);
+    if (!scan) return res.status(404).json({ error: "Scan not found" });
+    res.json(scan);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+router.delete("/:id", async (req, res) => {
+  try {
+    const deleted = await ScanResult.findByIdAndDelete(req.params.id);
+    if (!deleted) return res.status(404).json({ error: "Scan not found" });
+    res.json({ success: true, id: req.params.id });
+  } catch (err) {
+    console.error("Delete failed:", err);
     res.status(500).json({ error: err.message });
   }
 });
