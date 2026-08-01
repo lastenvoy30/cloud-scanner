@@ -20,30 +20,20 @@
 
 ## 🖼️ Screenshots
 
-![alt text](image.png)
+![alt text](frontend\src\app\Screenshots\image.png)
 
-![alt text](image-1.png)
+![alt text](frontend\src\app\Screenshots\image-1.png)
 
-![alt text](image-2.png)
+![alt text](frontend\src\app\Screenshots\image-2.png)
 
-![alt text](image-3.png)
+![alt text](frontend\src\app\Screenshots\image-3.png)
 
 
 ---
 
 ## 🏗️ Architecture
 
-┌─────────────────┐ ┌──────────────────┐ ┌─────────────┐
-│ Next.js UI │ ──────► │ Express API │ ──────► │ AWS SDK │
-│ (dashboard, │ REST │ (checks, scoring,│ reads │ (S3, EC2, │
-│ scan pages) │ ◄────── │ PDF generation) │ ◄────── │ IAM) │
-└─────────────────┘ └────────┬──────────┘ └─────────────┘
-│
-▼
-┌───────────────┐
-│ MongoDB │
-│ (scan history)│
-└───────────────┘
+![alt text](frontend\src\app\Screenshots\architecture.png)
 
 
 **Flow:** User clicks "Run Scan" → backend calls three AWS security checks in parallel → findings are merged and scored → result is saved to MongoDB → frontend redirects to a dedicated results page for that scan.
