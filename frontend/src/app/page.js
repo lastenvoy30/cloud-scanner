@@ -76,6 +76,10 @@ export default function Dashboard() {
       setLoading(false);
     }
   };
+  const exportPdf = () => {
+    if (!result?._id) return;
+    window.open(`${API_URL}/api/scan/${result._id}/pdf`, "_blank");
+  };
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -84,7 +88,7 @@ export default function Dashboard() {
 
   const sortedFindings = result
     ? [...result.findings].sort(
-        (a, b) => SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity]
+        (a, b) => SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity],
       )
     : [];
 
@@ -111,7 +115,10 @@ export default function Dashboard() {
         {/* Status eyebrow */}
         <div
           className="flex items-center gap-2 mb-6 text-xs tracking-widest uppercase"
-          style={{ fontFamily: "var(--font-mono)", color: "var(--text-tertiary)" }}
+          style={{
+            fontFamily: "var(--font-mono)",
+            color: "var(--text-tertiary)",
+          }}
         >
           <span
             className="inline-block w-2 h-2 rounded-full"
@@ -154,6 +161,21 @@ export default function Dashboard() {
           >
             {loading ? "Scanning..." : "▸ Run New Scan"}
           </button>
+          {result && !loading && (
+            <button
+              onClick={exportPdf}
+              className="px-6 py-3 rounded-md text-sm tracking-wide uppercase transition"
+              style={{
+                fontFamily: "var(--font-mono)",
+                fontWeight: 600,
+                background: "transparent",
+                color: "var(--text-secondary)",
+                border: "1px solid var(--border-bright)",
+              }}
+            >
+              ⬇ Export PDF
+            </button>
+          )}
         </header>
 
         {error && (
@@ -180,7 +202,10 @@ export default function Dashboard() {
           >
             <div
               className="text-3xl mb-3"
-              style={{ fontFamily: "var(--font-mono)", color: "var(--text-tertiary)" }}
+              style={{
+                fontFamily: "var(--font-mono)",
+                color: "var(--text-tertiary)",
+              }}
             >
               [ · · · ]
             </div>
@@ -218,11 +243,17 @@ export default function Dashboard() {
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
             <div
               className="md:col-span-2 rounded-lg p-8 flex flex-col items-center justify-center animate-grade-reveal"
-              style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+              style={{
+                background: "var(--surface)",
+                border: "1px solid var(--border)",
+              }}
             >
               <span
                 className="text-xs tracking-widest uppercase mb-3"
-                style={{ fontFamily: "var(--font-mono)", color: "var(--text-tertiary)" }}
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  color: "var(--text-tertiary)",
+                }}
               >
                 Security Grade
               </span>
@@ -238,7 +269,10 @@ export default function Dashboard() {
               </span>
               <span
                 className="mt-3 text-sm"
-                style={{ fontFamily: "var(--font-mono)", color: "var(--text-secondary)" }}
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  color: "var(--text-secondary)",
+                }}
               >
                 {result.score} / 100
               </span>
@@ -246,11 +280,17 @@ export default function Dashboard() {
 
             <div
               className="md:col-span-3 rounded-lg p-8 animate-fade-slide-in"
-              style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+              style={{
+                background: "var(--surface)",
+                border: "1px solid var(--border)",
+              }}
             >
               <span
                 className="text-xs tracking-widest uppercase block mb-4"
-                style={{ fontFamily: "var(--font-mono)", color: "var(--text-tertiary)" }}
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  color: "var(--text-tertiary)",
+                }}
               >
                 Findings by severity
               </span>
@@ -268,7 +308,7 @@ export default function Dashboard() {
                         background: SEVERITY_COLOR[sev],
                       }}
                     />
-                  ) : null
+                  ) : null,
                 )}
               </div>
 
@@ -280,7 +320,10 @@ export default function Dashboard() {
                       style={{
                         fontFamily: "var(--font-mono)",
                         fontWeight: 700,
-                        color: count > 0 ? SEVERITY_COLOR[sev] : "var(--text-tertiary)",
+                        color:
+                          count > 0
+                            ? SEVERITY_COLOR[sev]
+                            : "var(--text-tertiary)",
                       }}
                     >
                       {count}
@@ -301,11 +344,17 @@ export default function Dashboard() {
         {chartData.length > 1 && (
           <div
             className="rounded-lg p-6 mb-8"
-            style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+            style={{
+              background: "var(--surface)",
+              border: "1px solid var(--border)",
+            }}
           >
             <h2
               className="text-xs tracking-widest uppercase mb-4"
-              style={{ fontFamily: "var(--font-mono)", color: "var(--text-tertiary)" }}
+              style={{
+                fontFamily: "var(--font-mono)",
+                color: "var(--text-tertiary)",
+              }}
             >
               Score trend
             </h2>
@@ -347,7 +396,10 @@ export default function Dashboard() {
           <div>
             <h2
               className="text-xs tracking-widest uppercase mb-4"
-              style={{ fontFamily: "var(--font-mono)", color: "var(--text-tertiary)" }}
+              style={{
+                fontFamily: "var(--font-mono)",
+                color: "var(--text-tertiary)",
+              }}
             >
               Findings
             </h2>
@@ -403,7 +455,10 @@ function FindingCard({ finding, delay }) {
             </span>
             <span
               className="text-xs"
-              style={{ fontFamily: "var(--font-mono)", color: "var(--text-tertiary)" }}
+              style={{
+                fontFamily: "var(--font-mono)",
+                color: "var(--text-tertiary)",
+              }}
             >
               {finding.check}
             </span>
@@ -413,7 +468,10 @@ function FindingCard({ finding, delay }) {
           </p>
           <p
             className="text-xs mt-1 truncate"
-            style={{ fontFamily: "var(--font-mono)", color: "var(--text-tertiary)" }}
+            style={{
+              fontFamily: "var(--font-mono)",
+              color: "var(--text-tertiary)",
+            }}
           >
             {finding.resource}
           </p>
@@ -432,7 +490,10 @@ function FindingCard({ finding, delay }) {
       </div>
 
       {expanded && (
-        <div className="px-4 pb-4 animate-fade-slide-in" style={{ animationDuration: "0.25s" }}>
+        <div
+          className="px-4 pb-4 animate-fade-slide-in"
+          style={{ animationDuration: "0.25s" }}
+        >
           <div
             className="rounded-md p-3 text-xs relative"
             style={{
