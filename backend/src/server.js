@@ -12,8 +12,9 @@ app.get("/api/health", (req, res) => {
     mongo: mongoose.connection.readyState === 1,
   });
 });
-app.use("/api/scan", require("./routes/scan"));
 
+const requireApiKey = require("./middleware/auth");
+app.use("/api/scan", requireApiKey, require("./routes/scan"));
 const PORT = process.env.PORT || 5000;
 
 mongoose

@@ -6,7 +6,11 @@ import axios from "axios";
 import Navbar from "./components/Navbar";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
-const api = axios.create({ baseURL: API_URL, timeout: 15000 });
+const api = axios.create({
+  baseURL: API_URL,
+  timeout: 15000,
+  headers: { "x-api-key": process.env.NEXT_PUBLIC_API_KEY },
+});
 
 const GRADE_COLOR = {
   A: "var(--safe)",

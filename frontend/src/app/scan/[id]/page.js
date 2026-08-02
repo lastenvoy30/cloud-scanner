@@ -6,8 +6,11 @@ import axios from "axios";
 import Navbar from "../../components/Navbar";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
-const api = axios.create({ baseURL: API_URL, timeout: 15000 });
-
+const api = axios.create({
+  baseURL: API_URL,
+  timeout: 15000,
+  headers: { "x-api-key": process.env.NEXT_PUBLIC_API_KEY },
+});
 const SEVERITY_ORDER = { CRITICAL: 0, HIGH: 1, MEDIUM: 2, LOW: 3 };
 const SEVERITY_COLOR = {
   CRITICAL: "var(--critical)",
