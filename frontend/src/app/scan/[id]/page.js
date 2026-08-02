@@ -44,9 +44,25 @@ export default function ScanResultPage() {
     load();
   }, [id]);
 
-  const exportPdf = () => {
-    window.open(`${API_URL}/api/scan/${id}/pdf`, "_blank");
-  };
+  const exportPdf = async () => {
+  try {
+    const res = await api.get(`/api/scan/${id}/pdf`, {
+      responseType: "blob",
+    });
+
+    const url = window.URL.createObjectURL(new Blob([res.data]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `perimeter-report-${id}.pdf`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+  } catch (err) {
+    console.error("PDF export failed:", err);
+    alert("Failed to export PDF. Please try again.");
+  }
+};
   const deleteScan = async () => {
     if (!confirm("Delete this scan? This cannot be undone.")) return;
     try {
